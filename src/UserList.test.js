@@ -8,14 +8,24 @@ test('render the correct one row per user', () => {
         { name: 'val', email: 'val@val.com' },
         { name: 'jane', email: 'jane@jane.com' }
     ]
-    const { container } = render(<UserList users={users} />)
+    render(<UserList users={users} />)
 
-    const rows = container.querySelectorAll('tbody tr')
- 
+    const rows = within(screen.getByTestId('users')).getAllByRole('row')
 
     expect(rows).toHaveLength(2)
 })
 
 test('render the email and name of each user', () => {
+    const users = [
+        { name: 'val', email: 'val@val.com' },
+        { name: 'jane', email: 'jane@jane.com' }
+    ]
+    render(<UserList users={users} />)
 
+    for (const user of users) {
+        const name = screen.getByRole('cell', { name: user.name })
+        const email = screen.getByRole('cell', { name: user.email })
+        expect(name).toBeInTheDocument()
+        expect(email).toBeInTheDocument()
+    }
 })
