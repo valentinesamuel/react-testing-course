@@ -13,11 +13,11 @@ test('it shows two inputs and a button', () => {
 })
 
 test('it calls onUserAdd when the form is submitted', async () => {
-     const mock = jest.fn()
+    const mock = jest.fn()
     render(<UserForm onUserAdd={mock} />)
 
-    const nameInput = screen.getByRole('textbox', {name: /name/i})
-    const emailInput = screen.getByRole('textbox', {name: /email/i})
+    const nameInput = screen.getByRole('textbox', { name: /name/i })
+    const emailInput = screen.getByRole('textbox', { name: /email/i })
 
     const button = screen.getByRole('button')
 
@@ -30,11 +30,23 @@ test('it calls onUserAdd when the form is submitted', async () => {
 
     await user.click(button)
     expect(mock).toHaveBeenCalled()
-    expect(mock).toHaveBeenCalledWith({name:'val', email:'val@val.com'})
+    expect(mock).toHaveBeenCalledWith({ name: 'val', email: 'val@val.com' })
 })
 
-// test("it calls onUserAdd when the form is submitted", async () => {
+test('it empties the two inputs when for is submitted', () => {
+    render(<UserForm onUserAdd={() => { }} />)
 
-//     Then, add the await keyword wherever there is a user action:
+    const nameInput = screen.getByRole('textbox', { name: /name/i })
+    const emailInput = screen.getByRole('textbox', { name: /email/i })
+    const button = screen.getByRole('button')
 
-//     await user.click(nameInput);
+    user.click(nameInput)
+    user.keyboard('jane')
+    user.click(emailInput)
+    user.keyboard('jane@jane.com')
+
+    user.click(button)
+
+    expect(nameInput).toHaveValue('')
+    expect(emailInput).toHaveValue('')
+})
