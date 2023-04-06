@@ -1,12 +1,13 @@
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter, resolvePath } from "react-router";
 import { createServer } from "../../test/server";
 import AuthButtons from "./AuthButtons";
 
-const renderComponent = () => {
+const renderComponent = async () => {
     render(<MemoryRouter>
         <AuthButtons />
     </MemoryRouter>)
+    await screen.findAllByRole('link')
 }
 
 describe('when the user is not signed in', () => {
@@ -18,18 +19,31 @@ describe('when the user is not signed in', () => {
             }
         }
     ])
-    test('sign in and signup are visible', async () => {
+    test.only('sign in and signup are visible', async () => {
+        
         renderComponent()
-
+        const signInButton = screen.getByRole('link', {
+            name: /sign in/i
+        })
+        const signUpButton = screen.getByRole('link', {
+            name: /sign up/i
+        })
+        expect(signInButton).toBeInTheDocument()
+        expect(signInButton).toHaveAttribute('href', '/signin')
+        expect(signUpButton).toBeInTheDocument()
+        expect(signUpButton).toHaveAttribute('href', '/signup')
     })
 
     test('sign out is not visible', async () => {
         renderComponent()
-
+        const signOutButton = screen.queryByRole('link', {
+            name: /sign out/i
+        })
+        expect(signOutButton).not.toBeInTheDocument()
     })
 })
 
-describe('when the user is not  signed in', () => {
+describe('when the user is   signed in', () => {
     createServer([
         {
             path: '/api/user',
@@ -38,13 +52,31 @@ describe('when the user is not  signed in', () => {
             }
         }
     ])
-    test('sign in and sign up are not visible', async () => {
+    test.only('sign in and sign up are not visible', async () => {
+        
         renderComponent()
+        const signInButton = screen.queryByRole('link', {
+            name: /sign in/i
+        })
+        const signUpButton = screen.queryByRole('link', {
+            name: /sign up/i
+        })
+        expect(signInButton).not.toBeInTheDocument()
+        expect(signUpButton).not.toBeInTheDocument()
 
     })
 
     test('sign out is visible', async () => {
         renderComponent()
+        const signOutButton = screen.queryByRole('link', {
+            name: /sign out/i
+        })
+        expect(signOutButton).toBeInTheDocument()
+        expect(signOutButton).toHaveAttribute('href', '/signout')
 
     })
+})
+
+const pause = () => new Promise((resolve) => {
+    setTimeout(resolve, 1000);
 })
