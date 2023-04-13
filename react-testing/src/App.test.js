@@ -16,12 +16,12 @@ test('can receive a new user and show it on a', () => {
     user.click(nameInput)
     user.keyboard('jane')
     user.click(emailInput)
-    user.keyboard('jane@jane.com')
+    user.keyboard('test@test.com')
 
     user.click(button)
 
     const name = screen.getByRole('cell', { name: 'jane' })
-    const email = screen.getByRole('cell', { name: 'jane@jane.com' })
+    const email = screen.getByRole('cell', { name: 'test@test.com' })
 
     expect(name).toBeInTheDocument()
     expect(email).toBeInTheDocument()
